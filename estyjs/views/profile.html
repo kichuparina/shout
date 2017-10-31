@@ -1,0 +1,446 @@
+﻿<div class="full-width mcontainer myprofile  buffer-bottom" id="ProfileContainer">
+
+    <header class="full-width myprofile-header">
+        <h4>My Profile</h4>
+
+    </header>
+    <div class="full-width scrollbar-y fullheight" style="">
+        <div class="myprofile-body" style="overflow-y:scroll" id="style-5">
+
+
+            <div class="full-width">
+
+                <div class="full-width pull-left">
+
+
+                    <div style="width:200px; margin:0px auto">
+                        <div class="my-profile-pic-cont ">
+
+                            <img src="resource/images/default/profile.svg" id="img_mypicture" />
+                        </div>
+
+                    </div>
+
+
+                    <div class="full-width">
+                        <h5 class="half_width pull-left top_buffer_double changeProfilepic text-center full-width" id="changeProfilepic">change my picture</h5>
+                        <div class="half_width no-display" id="loaderProfileficture"><img src="resource/images/loader/loader.gif" height="50" style="margin-top: 4px;" /></div>
+
+                    </div>
+
+
+
+                    <div class="full-width no-display">
+                        <input type="file" name="fileUpload" id="uploadMyProfilepic" />
+                    </div>
+
+
+
+                </div>
+                <div class="full-width pull-right">
+                    <div class="full-width">
+                        <h4>My Information</h4>
+                        <table class="full-width table-border ">
+
+                            <tr>
+                                <td width="150">
+
+                                    <label class="full-width">Name</label>
+                                    <span id="lblMyProfileName" class="lbleditprofile" bind="myname"></span>
+
+                                </td>
+                                <td width="250">
+
+
+                                    <div class="full-width no-display" id="show-profile-name">
+                                        <input type="text" id="txtMyProfileName" class="form-control no-display txteditprofile" bind="myname" />
+                                    </div>
+
+                                </td>
+                                <td><label class="pull-left btn auto-toggle" for="show-profile-name" toggle-value="Edit|Save" style="color:#0b5178; cursor:pointer; font-size:10px;" id="lblEditName">Edit</label></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label class="full-width">Gender</label>
+                                    <span id="lblMyGender"></span>
+                                </td>
+                                <td>
+
+                                    <div class="full-width no-display" id="show-profile-gender">
+                                        <select id="ddlMyGender" class="form-control no-display">
+                                            <option value="1">Male</option>
+                                            <option value="2">Female</option>
+                                        </select>
+                                    </div>
+
+                                </td>
+                                <td><label class="pull-left btn auto-toggle" for="show-profile-gender" style="color:#0b5178; cursor:pointer; font-size:10px;" id="lblGender">Edit</label></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label class="full-width">User Name</label>
+                                    <label id="lbl_myprofile_username" class="lbleditprofile"></label>
+
+                                </td>
+                                <td>
+
+
+                                    <div class="full-width no-display">
+                                        <input type="text" id="txt_myprofile_username" class="no-display form-control  txteditprofile" />
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="full-width">Email</label>
+                                    <a id="lbl_myprofile_email" class="lbleditprofile" href="mailto:example@tutorialspark.com" bind="profile_email">Send an Email </a>
+                                </td>
+                                <td>
+
+
+                                    <div class="full-width no-display">
+                                        <input type="text" id="txt_myprofile_email" class="no-display form-control  txteditprofile" bind="profile_email" />
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label class="full-width">Account Status</label>
+                                    <span>Activate</span>
+                                </td>
+                                <td></td>
+                                <td><label class="pull-left btn" style="color:#0b5178; cursor:pointer; font-size:10px;" id="lblDeActivate">Deactive</label></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="full-width">
+                        <h4>Login Info</h4>
+                        <table class="table">
+
+                            <tr>
+                                <td>
+                                    <label class="full-width">Change Password</label>
+                                    <span>It's a good idea to use a strong password that you're not using elsewhere</span>
+
+                                </td>
+                                <td><h5 class="text-center" id="lblChangePassword" style="color: #0b5178; cursor: pointer; font-size: 12px;">Change my Password</h5></td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <div class="full-width">
+
+
+                        <div class="full-width no-display" id="changePasswordBusy">
+                            <div class="width75-percent pull-left">
+                                <div class="full-width buffer-top"><input type="password" class="form-control" placeholder="Old Password" id="txtOldPassword" /></div>
+                                <div class="full-width buffer-top"><input type="password" class="form-control" placeholder="New Password" id="txtNewPassword" /></div>
+
+                                <div class="full-width buffer-top">
+                                    <input type="button" class="btn btn-blue btn-sm pull-left" value="Change" id="btnChangePassword" />
+                                </div>
+                            </div>
+                            <div class="width25-percent pull-left">
+
+                                <img src="resource/images/loader/loader.gif" class="no-display" id="ajaxPasswordChange" width="50" style="float:left;margin-top: -10px;" />
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+
+            <div class="full-width buffer-top">
+                <input type="button" class="btn btn-danger btn-sm" id="btnGetBlockedList" value="Get Blocklist" />
+                <table class="full-width table-border top_buffer" id="listViewBlockedList"></table>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+<script>
+
+
+    var headers = localStorage.getItem('access_token');
+
+
+
+
+    var apiProfile = {
+
+        uploadProfilePicture: function () {
+            var totalFiles = document.getElementById("uploadMyProfilepic").files.length;
+            var formData = new FormData();
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById('uploadMyProfilepic').files[i];
+                formData.append('image', file);
+            }
+            var url = host + 'api/apiuser/uploadprofilepicture';
+            new HttpRequest(url, function () { }, headers).formRequest(formData, function (json) {
+                json = JSON.parse(json);
+                e('#loaderProfileficture').hide();
+                if (json.flag) {
+                    //$.notify(json.message);
+
+                    localStorage.setItem('profile_picture', json.profile_picture);
+                    e('#myPorfilePic').getObject(0).setAttribute('src', json.profile_picture);
+                }
+
+            });
+
+        },
+        getProfile: function () {
+            var account_id = localStorage.getItem('account_id');
+
+            var url = host + 'api/apiuser/GetUserProfile?account_id=' + account_id;
+            new HttpRequest(url, function () { }, headers).getRequest(function (json) {
+                console.log("getUserProfile: " + json.profile);
+
+                if (json.profile.profile_picture == null) {
+                    json.profile.profile_picture = 'resource/images/default/profile.svg';
+                }
+                else {
+                    json.profile.profile_picture = host + json.profile.profile_picture;
+                }
+                //alert(json.profile.profile_picture);
+
+
+                let gender = json.profile.gender;
+                if (gender == null) {
+                    gender = "";
+                }
+                let _g = 0;
+                if (gender == "Male") {
+                    _g = 1;
+                }
+                else if (gender == "Female") {
+                    _g = 2;
+                }
+                e('#lblMyGender').val(gender);
+                e('#ddlMyGender').val(_g);
+
+                e('#lblMyProfileName').val(json.profile.name);
+                e('#txtMyProfileName').val(json.profile.name);
+
+
+
+
+
+                e('#lbl_myprofile_email').val(json.profile.email);
+                e('#lbl_myprofile_username').val(json.profile.username);
+                e('#img_mypicture').getObject(0).setAttribute('src', json.profile.profile_picture);
+
+
+
+            });
+
+        },
+        getBlockFriends: function () {
+            var url = host + 'api/ApiBlockFriend/GetBlockedFriends';
+            new HttpRequest(url, function () { }, headers).getRequest(function (json) {
+                console.log("blockFriend" + json.flag);
+
+
+                json.block_list.forEach(function (obj) {
+
+
+
+                    if (obj.profile_picture != null) {
+                        obj.profile_picture = host + obj.profile_picture + "&type=sm";
+                    }
+                    else {
+                        obj.profile_picture = 'resource/images/default/profile.svg';
+                    }
+
+
+                    //   $("#blockedTemplat").tmpl(obj).appendTo("#listViewBlockedList");
+                    new Template(json.block_list, 'blockedTemplat', 'listViewBlockedList').html();
+                });
+
+                e('.btnUnblock').on('click', function () {
+
+                    var account_id = this.getAttribute('data-account_id');
+                    apiProfile.unBlockFriend(account_id);
+                    $(this).closest('tr').hide();
+                });
+
+
+
+            });
+        },
+        unBlockFriend: function (account_id) {
+            var url = host + 'api/ApiBlockFriend/UnBlockFriend';
+            var senddata = { "account_id": account_id };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("blockFriend" + json.flag);
+                getChats();
+            });
+        },
+        updateProfile: function () {
+            let gender = e('#ddlMyGender').val();
+            let senddata = { Name: e('#txtMyProfileName').val(), Gender: gender, Email: 'abcd@gmail.com', Password: '1234', UserName: 'abcd' };
+            new HttpRequest(host + "api/apiuser/updateprofile", function () { }, headers).postRequest(JSON.stringify(senddata), function (data) {
+                let json = JSON.parse(data);
+                console.log(json);
+
+                alert(json.message);
+
+            });
+
+        },
+        changePassword: function (old_password, new_password) {
+            e('#ajaxPasswordChange').show();
+            var url = host + '/api/apiuser/changepassword';
+            var senddata = { "old_password": old_password, 'new_password': new_password };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                json = JSON.parse(json);
+                console.log("changePassword" + json.flag);
+                displayMessage(json.message);
+                e('#ajaxPasswordChange').hide();
+                if (json.flag) {
+                   e('#changePasswordBusy').hide();
+                }
+            })
+
+        }
+
+    };
+
+
+
+    apiProfile.getProfile();
+
+
+
+
+    e('.auto-toggle').on('click', function () {
+
+
+        // let text = (this).textContent;
+        let aName = this.getAttribute('for');
+
+        //let toggleValue = this.getAttribute('toggle-value');
+
+
+
+        //if (toggleValue != null)
+        //{
+        //    let tArray = toggleValue.split('|');
+        //    if (tArray[0] == text) {
+        //        this.textContent = tArray[1];
+        //    }
+        //    else {
+        //        this.textContent = tArray[0];
+        //    }
+
+        //    //tArray.forEach(function (o) {
+
+        //    //});
+
+        //}
+        e('#' + aName).toggle();
+    });
+
+
+
+
+
+    e('#lblEditName,#lblGender').on("click", updateProfiel_event);
+    e('#changeProfilepic').on("click", changeProfilepic_event);
+    e('#btnGetBlockedList').on('click', getBlockList_event);
+    e("#uploadMyProfilepic").on('change', uploadMyProfilePicture);
+
+    e('#btnChangePassword').on('click', changePassword_event);
+    e('#lblChangePassword').on('click', function () {
+
+        e('#changePasswordBusy').show();
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+    function changePassword_event() {
+
+        let oldPassword = e('#txtOldPassword').val();
+        let newPassword = e('#txtNewPassword').val();
+
+        if (oldPassword.length == 0 || newPassword.length == 0)
+        {
+            displayMessage("field can't be empty");
+            return;
+        }
+        apiProfile.changePassword(oldPassword, newPassword);
+    }
+
+    function updateProfiel_event() {
+        let text = (this).textContent;
+        if (text == "Edit") { (this).textContent = "Save"; }
+        else {
+            (this).textContent = "Edit";
+            apiProfile.updateProfile();
+        }
+
+
+    }
+    function changeProfilepic_event() {
+        document.getElementById('uploadMyProfilepic').click();
+    }
+    function getBlockList_event() {
+        apiProfile.getBlockFriends();
+    }
+
+    function uploadMyProfilePicture() {
+        var totalFiles = document.getElementById("uploadMyProfilepic").files.length;
+
+        if (totalFiles > 0) {
+            readURL(this, "img_mypicture");
+            apiProfile.uploadProfilePicture()
+            e('#loaderProfileficture').show();
+        }
+    }
+
+    function readURL(input, imageView) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+
+                document.getElementById(imageView).setAttribute('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+
+
+
+
+
+
+
+</script>

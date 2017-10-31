@@ -1,0 +1,5 @@
+bin/
+obj/
+esty/obj
+esty/obj/Debug
+/packages

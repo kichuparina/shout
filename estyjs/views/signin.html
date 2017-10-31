@@ -1,0 +1,45 @@
+﻿<h4>signin</h4>
+
+<script>
+
+
+    (document).getElementById('btnSignin').addEventListener('click', function () { SignIn(); }, false);
+
+    function SignIn() {
+        let username = document.getElementById('txtUsername').value;
+        let password = document.getElementById('txtPassword').value;
+
+
+        var senddata = 'grant_type=password&username=' + username + '&password=' + password + '&device=web&device_name=chrome&device_id=2234';
+        new HttpRequest(host + "api/authenticate", function () { }, '').postRequest(senddata, function (data) {
+            data = JSON.parse(data);
+
+            var access_token = "bearer " + data.access_token;
+
+            console.log(access_token);
+            localStorage.setItem('access_token', access_token);
+            let name = data.name;
+            e('#lblMyName').val(name);
+            let account_id = data.account_id;
+            let private_id = data.private_id;
+            let profile_picture = data.profile_picture;
+            if (profile_picture == null) {
+                profile_picture = 'resource/images/default/profile.svg';
+            }
+            else {
+                profile_picture = host + profile_picture + "&size=sm";
+            }
+
+            e('#myPorfilePic').getObject(0).setAttribute('src', profile_picture);
+
+            localStorage.setItem('name', name);
+            localStorage.setItem('account_id', account_id);
+            localStorage.setItem('private_id', private_id);
+            localStorage.setItem('profile_picture', profile_picture);
+            app.initPage("livefeed");
+            // getChats();
+            apiCall.getChats();
+
+        });
+    }
+</script>

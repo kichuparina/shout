@@ -1,0 +1,32 @@
+﻿<h4>signup</h4>
+
+<script>
+
+    e('#signupForm').on("submit", function (evnt) {
+        e('#loader-signup').show();
+        let name = e('#txtSignUpName').val();
+        let email = e('#txtSignUpNameEmail').val();
+        let username = e('#txtSignUpUserName').val();
+        let password = e('#txtSignUpPassword').val();
+
+        let senddata = { Name: name, Email: email, UserName: username, Password: password };
+        console.log(senddata);
+        new HttpRequest(host + "api/apiuser/registation", function () { }, '').postRequest(JSON.stringify(senddata), function (data) {
+            let json = JSON.parse(data);
+            console.log(json);
+
+            e('#loader-signup').hide();
+            e('#lblSignupResult').val(json.message);
+
+            if (json.flag)
+            {
+                e('#signupForm').hide();
+                e('#success-registration').show();
+            }
+        });
+        evnt.preventDefault();
+        return false;
+
+
+    });
+</script>

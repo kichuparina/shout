@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Single Page Application Micro Framework Demo</title>
+    <style></style>
+
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<script src="libs/jquery-1.10.2.min.js"></script>-->
+  
+    <link href="resource/css/chat.css" rel="stylesheet" />
+    <link href="resource/css/style.css" rel="stylesheet" />
+    <link href="resource/css/style.mobile .css" rel="stylesheet" />
+    <link href="resource/css/style.desktop.css" rel="stylesheet" />
+    <link href="resource/css/chat.css" rel="stylesheet" />
+    <link href="resource/css/style.tablet.css" rel="stylesheet" />
+
+    <link href="resource/css/toast.css" rel="stylesheet" />
+  
+
+    <!--<script src="libs/esty.template.js"></script>-->
+
+
+
+    <script src="libs/template.js"></script>
+
+    <style>
+        html, body, .fullheight {
+            max-height: 100% !important;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+
+
+
+<body style="padding:0; margin:0;font-family: 'Segoe UI', arial, sans-serif; font-size: 12px; ">
+
+    <script id="chatsTemplate" type="text/x-jQuery-tmpl">
+
+        <div class="full-width pull-left chatrow userinfo_${private_id}" data-id="${id}" data-private-id="${private_id}" data-name="${name}">
+
+
+            <div class="chatrow_userpicture_container">
+
+                <img src="${profile_picture}" class="img-responsive profile_pic_small pic_${private_id}" />
+            </div>
+            <div class="chatrow_userdetails_container">
+
+                <div class="full-width pull-left ">
+                    <label class="width70-percent pull-left text-overflow-hidden">${name}</label>
+                    <div class="width25-percent pull-left"><span class="online no-display online_${private_id}" data-private-account_id="${private_id}"></span></div>
+
+                </div>
+
+                <div class="full-width pull-left " style=" margin-top: -5px;">
+
+                    <div class="half_width text-overflow-hidden">${last_message}</div>
+                    <div class="half_width">
+                        <label class="full-width margin-zero">
+                            <span if="${this.total_unseen}>0" class="total_unseen c_indicator bg-green" id="indicator_${private_id}" >${total_unseen}</span>
+
+                            <span if="${this.total_unseen}==0" class="total_unseen c_indicator bg-green no-display" id="indicator_${private_id}">${total_unseen}</span>
+
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <div id="signinContainer" class="no-display full-height full-width accessContainer">
+        <div class="accessContainer-inner">
+            <div class="row"><h4>Login</h4></div>
+
+            <div class="row buffer-top">
+                <input type="text" class="form-control" placeholder="username" id="txtUsername" value="this.esty" />
+            </div>
+
+            <div class="row buffer-top">
+                <input type="password" class="form-control" placeholder="password" id="txtPassword" value="Abc123456" />
+            </div>
+
+            <div class="row buffer-top">
+                <input type="button" value="Login" class="btn btn-blue" id="btnSignin" />
+            </div>
+
+            <a href="#signup" class="full-width text-center">New User</a>
+        </div>
+    </div>
+    <div id="signUpContainer" class="no-display full-height full-width accessContainer">
+        <div class="accessContainer-inner">
+           
+            <form id="signupForm">
+                <div class="row"><h4>Create new account</h4></div>
+                <div class="row buffer-top pull-left">
+                    <input type="text" class="form-control" placeholder="Name" id="txtSignUpName" />
+                </div>
+                <div class="row buffer-top pull-left">
+                    <input type="email" class="form-control" placeholder="Email" id="txtSignUpNameEmail" />
+                </div>
+
+                <div class="row buffer-top pull-left">
+                    <input type="text" class="form-control" placeholder="Username" id="txtSignUpUserName" />
+                </div>
+
+                <div class="row buffer-top pull-left">
+                    <input type="password" class="form-control" placeholder="Password" id="txtSignUpPassword" />
+                </div>
+
+                <div class="row buffer-top pull-left">
+                    <input type="submit" value="SignUp" class="btn btn-blue pull-left" id="btnSignUp" />
+
+
+                    <img src="resource/images/icon/ajax-loader.gif" class="pull-left no-display" id="loader-signup" style="margin-top: -25px; margin-left: 24px;" />
+                </div>
+                <div class="row buffer-top pull-left">
+                    <label id="lblSignupResult" class="no-dispaly full-width text-center"></label>
+                </div>
+            </form>
+            <div class="no-dispaly row pull-left " id="success-registration" style="display:none">
+                <h4>Contratulation</h4>
+                <h5>Your have successfully register.</h5>
+                <h5>A verification link has been sent to your email account</h5>
+
+            </div>
+            <a href="#signin" class="full-width text-center">Go to signin</a>
+          
+        </div>
+
+       
+    </div>
+  
+   
+    <div class="full-width fullheight no-display app-content" id="mainContainer">
+
+
+
+        <div class="full-width" id="cNav">
+
+            <div class="full-width pull-left ">
+
+
+
+                <ul class="nav-horizontal header-nav" style="float:left; width:auto">
+                    <li>
+                        <div id="menu-toggle" class="drawer hide-on-desktop">
+                            <img src="resource/images/icon/menu.png" class="image" height="20" width="20" />
+                        </div>
+                    </li>
+                    <li>
+                        <a href="http://localhost:68/livefeed" id="mnuFeed">
+
+                            <img src="resource/images/icon/feed.png" height="21" width="21" class="pull-left hide-on-desktop" />
+
+                            <span class="pull-left no-display-in-phone">Live feed</span>
+                        </a>
+
+                    </li>
+                    <li>
+                        <a href="#profile" class="btnProfile">
+
+                            <img src="resource/images/icon/me.png" height="23" width="23" class="pull-left hide-on-desktop" />
+                            <span class="pull-left no-display-in-phone"> Profile</span>
+                        </a>
+
+                    </li>
+
+
+
+                </ul>
+                <ul class="nav-horizontal header-nav pull-right ">
+                    <li id="notification_li" class="pull-left">
+                        <span id="notification_count" class="no-display">3</span>
+                        <div href="#" id="notificationLink">
+                            <img src="resource/images/icon/notifications.png" height="20" width="20" />
+                        </div>
+
+                        <div id="notificationContainer" class="no-display">
+                            <div id="notificationTitle">Notifications</div>
+                            <div id="notificationsBody" class="notifications">
+
+                                <ul class="full-width nav-horizontal" id="ntcContainer"></ul>
+
+                            </div>
+                            <div id="notificationFooter" class="no-display"><a href="#" style="color:#000">See All</a></div>
+                        </div>
+
+                    </li>
+
+                    <li class="pull-left">
+                        <a href="#logout" id="logOut">
+                            <img src="resource/images/icon/signout.png" height="20" width="20" class="pull-left hide-on-desktop" />
+                            <span class="pull-left no-display-in-phone">Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+
+
+        </div>
+       
+        <div class="full-width" style="border-radius: 0 0 6px 6px; height: 100%; border: 1px solid #ccc; background: #fff;">
+
+
+
+            <div id="side-bar" class="side-bar fullheight hide-on-tablet" style="  padding: 3px;    box-sizing: border-box;">
+
+                <div class="full-width pull-left" style="padding-top:5px;height :49px;">
+                    <div class="img-container-vs pull-left" style="float:left">
+                        <img src="resource/images/default/profile.svg " class="pull-right img-responsive" id="myPorfilePic" />
+                    </div>
+                    <span style="color: #000; font-size: 15px; margin-top: 5px" class="pull-left" id="lblMyName">Istiaque Chowdhury</span>
+
+                </div>
+                <div class="full-width pull-left" style="height:98%">
+                    <div class="full-width top_buffer">
+                        <input type="text" class="form-control" placeholder="Search your friends" id="txtFindFriend" />
+                    </div>
+
+                    <div class="full-width pull-left" style="border-bottom: 1px solid #ccc; height: 46px;">
+                        <ul class="contact_list">
+                            <li id="lblContact" class="contact_list_selected lifriend half_width" style="border-radius: 4px 0px 0px 4px; ">Contact</li>
+                            <li id="lblRequest" class="lifriend half_width" style="border-radius: 0px 4px 4px 0px; ">
+                                Friend Request
+                                <span class="c_indicator bg-green pending_request_indicator no_display" style="padding:2px;">0</span>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="full-width scrollbar-y sidebar-ctr buffer-top" id="style-5">
+
+
+
+                        <div class="full-width no-dispaly friend" id="c_findfriends">
+
+                            <h3>sarch results</h3>
+                            <div class="full-width top_buffer" id="listview_findfriends">
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="full-width pull-left  friend" id="chats">
+
+
+
+                        </div>
+
+
+
+                        <div class="full-width pull-left friend no-dispaly" id="c_pendingRequest">
+
+                            <h5>Pending Request</h5>
+                            <div class="full-width" id="listviewPendingRequest">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+            <div class="main-container full-width-tablet">
+
+                <div id="app" class="full-width pull-left fullheight">
+                    <div class="full-width mcontainer nodispaly no-display" id="webcam">
+
+                        <video id="remoteVideo" autoplay height="200" width="200"></video>
+                        <video id="localVideo" autoplay muted height="200" width="200"></video>
+
+                        <input id="endCallButton" type="button" disabled value="End Call" />
+                    </div>
+
+
+                    <section id="chat" class="full-height"></section>
+                    <section id="profile" class="full-height"></section>
+                    <section id="livefeed" class="fullheight"></section>
+                    <section id="home"></section>
+                    <section id="signin" class="fullheight"></section>
+                    <section id="signup" class="fullheight"></section>
+                    <section id="logout" class="fullheight"></section>
+                </div>
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="libs/esty.vanilla.route.js"></script>
+    <script src="libs/esty.js"></script>
+    <script src="libs/app.js"></script>
+
+    <!--<script src="libs/push_server.js"></script>
+    
+    <script src="libs/jquery-1.10.2.min.js"></script>
+    <script src="libs/jquery.signalR-2.2.2.js"></script>
+    <script src="http://localhost:61/signalr/hubs"></script>-->
+
+    <link href="resource/css/notification.css" rel="stylesheet" />
+    <script id="notificationTemplate" type="text/x-jQuery-tmpl">
+
+
+        <li class="full-width feedNotification" style="height:auto;margin:0" feed_id="${feed_id}">
+            <a class="full-width" href="/chat#livefeed" style="color:#000;">
+                <div class="full-width">
+                    <div class="chatrow_userpicture_container">
+                        <img src="${account.profile_picture}" class="img-responsive profile_pic_small">
+                    </div>
+                    <div class="chatrow_userdetails_container">
+
+                        <p class="pull-left" style="margin-top: 3px; margin-left: 7px;"> <span class="notification-text">${account.name}</span> ${message}</p>
+                    </div>
+                </div>
+            </a>
+        </li>
+
+    </script>
+    <script id="blockedTemplat" type="text/x-jQuery-tmpl">
+        <tr>
+            <td>
+                <div class="chatrow_userpicture_container">
+                    <img src="${profile_picture}" class="img-responsive profile_pic_small">
+                </div>
+
+
+                <div class="chatrow_userdetails_container">
+                    <label class="global">
+                        ${name}
+
+                    </label>
+                    <div class="global"> ${username}</div>
+                </div>
+
+            </td>
+            <td>${when_blocked}</td>
+            <td><input type="button" value="Unblock" class="btn btn-sm btnUnblock" data-account_id="${account_id}" /></td>
+        </tr>
+
+    </script>
+    <script id="userProfileTemplat" type="text/x-jQuery-tmpl">
+        <div class="full-width">
+            <div class="my-profile-pic-cont ">
+                <img src="${profile_picture}" class="img-responsive" style="height:100%; width:100%" />
+            </div>
+            <div class="full-width buffer-top">
+
+                <table class="table-border full-width">
+                    <tr>
+                        <td>Name:</td>
+                        <td>${name}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Gender:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>${email}</td>
+                    </tr>
+                    <tr>
+                        <td>UserName:</td>
+                        <td>${username}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Online:</td>
+                        <td>${last_online}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="global buffer-top">
+                <div class="global">
+                    <input type="button" value="Block" class="btn btn-red btnBlockFriend" data-account_id="${account_id}" />
+
+                    <input type="button" value="Follow" class="btn btn-light-blue btnFollowUnfollow nodispaly" data-account_id="${account_id}" />
+                    <input type="button" value="Unfriend" class="btn btn-red btn-sm btnUnfriend" data-account_id="${account_id}" />
+                </div>
+
+            </div>
+        </div>
+    </script>
+
+
+
+    <script id="chatHistoryTemplate" type="text/x-jQuery-tmpl">
+
+        <div class="full-width" if='${display_position}==right'>
+            <div class="speech-bubble-me">
+                <div class="global">${message}</div>
+                <div class="global rowChatStatus" data-chat-id="${chat_id}">
+                    <img src="${chat_state_image}" height="15" width="15" class="pull-right msgState msgSateDelivered" id="img_${chat_id}" />
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="full-width" if='${display_position}==left'>
+            <div class="you_img_container">
+                <img style="width: 100%; height: 100%; border-radius: 20px;" src="${sender_profile_picture}" class="img-responsive " />
+            </div>
+            <div class="speech-bubble-you"> ${message} </div>
+        </div>
+
+
+
+
+    </script>
+
+    <script id="feedTemplate" type="text/x-jQuery-tmpl">
+
+        <div class="feedrow row-100-pertent-in-phone-ls">
+            <header class="full-width pull-left feedheader" style=" height: 49px;" data-id='${feed_id}'>
+                <div class="feed_userpicture_container">
+                    <img class="img-responsive profile_pic_small" src="${account.profile_picture}" />
+                </div>
+                <div style="width:calc(100% - 70px); float:left; padding-left:10px;color: #000; text-align:left">
+
+
+                    <label if="${is_shared}==true" class="full-width pull-left margin-zero" style="width: 100%; float: left; display: inline-block; white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis;">
+                        ${owner_details.owner_name}
+                        <span style="color:#5c99e4">shared</span> ${account.name} feed
+                    </label>
+
+                    <label if="${is_shared}==false" class="full-width pull-left margin-zero"> ${account.name}</label>
+
+
+                    <p class="full-width pull-left">${timestamp}</p>
+                </div>
+
+            </header>
+            <div class="full-width pull-left">
+
+                <h4 class="top_buffer_double">${feed_text} </h4>
+                <div if="${media_links.length}>0" class="full-width pull-left buffer-bottom ">
+                    <img class="full-width pull-left" src="${media_links[0].image_path}" />
+                </div>
+
+            </div>
+            <footer class="full-width feed-footer" feed-id='${feed_id}' feed-private-id='${feed_private_id}'>
+                <div class="full-width" style="border-bottom: 1px solid #f4f4f4; height: 30px; border-top: 1px solid #f4f4f4; margin-bottom: 4px; background: #f4f4f4; padding-top: 6px; padding-left: 6px;">
+
+                    <div style="width:69px;float:left">
+
+                        <img class="pull-left likeUnlikePhoto" if="${is_liked}==true" src="resource/images/icon/favorite.png" dt="${is_liked}" height="16" width="16" data-id='${feed_id}' />
+
+                        <img class="pull-left likeUnlikePhoto" if="${is_liked}==false" src="resource/images/icon/not_favorite.png" dt="${is_liked}" height="16" width="16" data-id='${feed_id}' />
+                        <span class="feed_feedback_s_2">${total_like} like</span>
+                    </div>
+
+
+                    <div style="width:111px;float:left">
+                        <img class="pull-left" src="resource/images/icon/comment.png" height="16" width="16" />
+                        <span class="feed_feedback_s_2" id='c_${feed_private_id}'>${total_comment} comment</span>
+                    </div>
+
+
+                    <div style="width:101px;float:left;cursor:pointer;" data-id='${feed_id}' class="sharefeed">
+
+                        <img class="pull-left" src="resource/images/icon/share.png" height="16" width="16" />
+                        <span class="feed_feedback_s_2">share</span>
+                    </div>
+                </div>
+
+                <div class="full-width pull-left ">
+
+
+                    <div class="full-width pull-left commentView top_buffer_double viewComment${feed_private_id}" id="viewComment${feed_private_id}">
+
+                        <div repeat="comments" class="full-width pull-left commentView-inner">
+                            <div class="row_pic_container_sm">
+                                <img class="img-responsive profile_pic_small" src="${account.profile_picture}">
+                            </div>
+
+
+                            <div style="width:calc(100% - 50px); float:left; padding-left:10px;padding-top: 6px;padding-bottom: 4px;">
+
+
+
+
+                                <p if='${comments.comment_type}==text' class="comment-text">
+                                    <span class="text_bold">${account.name} </span>
+                                    <br />
+                                    ${comment}
+                                </p>
+
+                                <div class="full-width top_buffer bottom_buffer" if="${comments.comment_type}=='media'">
+                                    <img src="${comments.comment}" width="200" class="img-responsive" />
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="full-width pull-left buffer-top">
+
+                        <div class="fake-input">
+
+                            <input type="text" class="form-control textAddComment emojify" placeholder="add comment"/>
+                            <img src="resource/images/icon/photo.png" width=25 class="imgPhotoComment" />
+                            <img src="resource/images/icon/happy.png" width="25" style="float:left;margin-right: 22px;" class="evtEmoji" id="chatEmoji">
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </footer>
+        </div>
+    </script>
+
+    <script id="topicsTemplate" type="text/x-jQuery-tmpl">
+        <div class="full-width">
+
+            <h5 style="color: #8c8585;">${topics_text}</h5>
+
+            <ol class="full-width">
+
+
+                <li repeat="question_list" data-id="${question_id}" class="question buffer-bottom" style="float:left;width:100%;    margin-bottom: 26px;">
+
+                    <span style="font-weight: 500; margin-bottom: 7px; font-size: 13px; line-height: 17px" class="pull-left"> ${question_text}</span>
+                    <br />
+                    <div class="full-width">
+
+                        <span style="background: #ccc; padding: 3px 7px 3px 7px; font-size: 10px; border-radius: 2px; cursor: pointer; user-select: none;" onclick="joinADebate('${question_id}','2')">Debate against</span>
+                        <span style="background: #ccc; padding: 3px 7px 3px 7px; font-size: 10px; border-radius: 2px; cursor: pointer; user-select: none;" onclick="joinADebate('${question_id}','1')">Debate for</span>
+                    </div>
+
+                </li>
+
+            </ol>
+
+
+        </div>
+
+    </script>
+
+    <script id="pendingFriendTemplat" type="text/x-jQuery-tmpl">
+
+
+        <div class="full-width friends_row">
+
+
+            <div class="chatrow_userpicture_container">
+
+
+                <img src="${profile_picture}" class="img-responsive img-rounded" />
+
+
+            </div> <div class="chatrow_userdetails_container">
+
+                <label class="full-width text_bold">${name} </label>
+
+                <div class="full-width">
+                    <div class="half_width pull-left" style="    min-height: 40px;">
+                        <p class="global friends_row_username">${username}</p>
+
+
+
+
+                    </div>
+                    <div class="pull-left half_width" style="margin-top: -9px;">
+                        <input type="button" value="Cancel" class="btn btn-danger btn-sm pull-right friends_row_btn btnCancelRequest" data-account_id="${account_id}" />
+                        <input type="button" value="Accept" class="btn btn-primary btn-sm pull-right friends_row_btn btnAccecptRequst" data-account_id="${account_id}" />
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </script>
+
+    <script id="findFriendTemplat" type="text/x-jQuery-tmpl">
+
+
+        <div class="full-width friends_row">
+            <div class="chatrow_userpicture_container">
+                <img src="${profile_picture}" class="img-responsive profile_pic_small" />
+            </div>
+            <div class="chatrow_userdetails_container">
+                <p class="full-width text_bold">${name} </p>
+
+                <div class="full-width">
+                    <div class="half_width"><p class="full-width friends_row_username">${username}</p></div>
+                    <div class="half_width" style="float:right;    margin-top: -9px;">
+                  
+                        <input if="${request_type}==send friend request" type="button" value="Send" class="btn btn-primary btn-sm pull-right friends_row_btn btnSendRequest" data-account_id="${account_id}" />
+                   
+                     
+                        <span if="${request_type}==Already Friend"></span>
+                        
+                        <input if="${request_type}==Pending" type="button" value="Cancel" class="btn btn-danger btn-sm pull-right friends_row_btn btnCancleRequest" data-account_id="${account_id}" />
+            
+
+              
+                        <input if="${request_type}==Confirm" type="button" value="Confirm" class="btn btn-info btn-sm pull-right friends_row_btn btnConfirmRequest" data-account_id="${account_id}" />
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <div id="snackbar" >Some text some message..</div>
+</body>
+</html>

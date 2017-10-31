@@ -1,0 +1,394 @@
+﻿<div class="full-width pull-left  mcontainer" id="FeedContainer">
+    <div class="width65-percent full-height pull-left full-width-tablet" id="containerLiveFeed">
+        <div class="row pull-left  no-display-in-phone">
+            <h4>Live Feed's</h4>
+        </div>
+
+
+        <div class="full-width pull-left  feed_scrollview" id="style-5" style=" padding-bottom: 42px;">
+            <div class="feed_header">
+
+                <div class="full-width pull-left " style="padding: 2%;padding-top: 10px;">
+
+
+
+                    <div class="field-wrapper" style="background:#fff">
+                        <a class="pull-right" id="btnPostTextFeed">
+                            <img src="resource/images/icon/send.png" style="margin-top: 1px; height: 29px; width: 29px; padding: 5px;" />
+                        </a>
+                        <div style="overflow: hidden; padding-right: .5em;">
+                            <textarea type="text" placeholder="Share what's on your mind" class="form-control" id="txtFeedText" style="height: 40px; border:0; background:#fff; overflow: hidden;    resize: none;" bind="text-feed"></textarea>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="full-width pull-left buffer-top">
+                        <div class="half_width"><label class=" top_buffer text_bold" id="feedAddPhoto">Add photo</label></div>
+
+                        <div class="half_width no-display" id="loaderUpdateFeed"><img src="resource/images/icon/ajax-loader.gi" height="50" style="margin-top: 4px;float:right;" /></div>
+
+                        <input type="file" name="feedmdeia" class="no-display" id="feedmdeia" />
+                        <div class="full-width pull-left  no-display top_buffer_double padding-10" id="feedMediaContainar" style="background: #fff; margin-bottom: 15px;">
+                            <label bind="text-feed" class="full-width pull-left "></label>
+                            <img id="output" width="300" />
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <input type="file" name="commentmdeia" class="no-display" id="commentmdeia">
+            <div class="full-width pull-left " id="viewFeedContainer">
+
+
+
+
+
+
+
+            </div>
+
+
+            <div class="full-width no-display" id="feedLoader">
+                <img src="resource/images/default/loader.gif" height="50" style="float: right;  position: absolute; z-index: 100;  left: 50%;" />
+            </div>
+
+
+
+
+
+        </div>
+
+
+        <!--<div class="full-width no-dispaly"  id="feedLoader">
+        <img src="resource/images/default/loader.gif" height="50" style="float: right; display:none; position: absolute; z-index: 100; margin-top: -34px; left: 50%;" />
+         </div>-->
+
+    </div>
+
+
+
+    <div class="width35-percent full-height pull-right padding-10  hide-on-tablet">
+
+
+
+
+
+
+        <div class="full-width pull-left  full-height">
+
+            <h4>Today's debate topics</h4>
+            <div class="full-width pull-left  " style="overflow-y:scroll;  height: calc( 100% - 30px);    " id="style-5">
+
+                <div class="full-width pull-left   " id="topicsContainer"></div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+<script>
+
+
+    var FeedIcon =
+    {
+        feed_favorite: 'resource/images/icon/favorite.png',
+        feed_not_favorite: 'resource/images/icon/not_favorite.png',
+    };
+    var headers = localStorage.getItem('access_token');
+
+    e('#btnPostTextFeed').on("click", addNewFeed_Event);
+
+
+    function addNewFeed_Event() {
+
+
+
+        let text = e('#txtFeedText').val();
+        var totalFiles = document.getElementById("feedmdeia").files.length;
+        if (totalFiles == 0) {
+            feedApi.createSingleFeed(text);
+        }
+        else {
+
+            var url = host + "api/apilivefeed/CreateMediaFeed?feed_text=" + text + "&privacy_type=2";
+            feedApi.createMediaFeed(url);
+        }
+
+
+    }
+    e('#feedAddPhoto').on("click", function () { document.getElementById('feedmdeia').click(); });
+
+    function readURL(input, imageView) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+
+                document.getElementById(imageView).setAttribute('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    e("#feedmdeia").on('change', uploadFeedMedia);
+    function uploadFeedMedia() {
+        var totalFiles = document.getElementById("feedmdeia").files.length;
+
+        if (totalFiles > 0) {
+            readURL(this, "output");
+            e('#feedMediaContainar').show();
+        }
+    }
+
+
+
+    feedApi = {
+        addTextComment: function (message, feed_id, commentDivId) {
+
+            var url = host + "api/apilivefeed/addcomment";
+            var senddata = { "feed_id": feed_id, "comment_text": message };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("addTextComment" + json.flag);
+                ///$.notify(json.message);
+                //getComments(feed_id, commentDivId)
+            });
+        },
+        addTextComment: function (message, feed_id, commentDivId) {
+
+            var url = host + "api/apilivefeed/addcomment";
+            var senddata = { "feed_id": feed_id, "comment_text": message };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("addTextComment" + json.flag);
+                ///$.notify(json.message);
+                //getComments(feed_id, commentDivId)
+            });
+        },
+        createSingleFeed: function (text) {
+
+
+            e('#loaderUpdateFeed').hide();
+            var senddata = { feed_text: text, privacy_type: 2 };
+            var url = host + "api/apilivefeed/CreateTextFeed";
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("createSingleFeed" + json.flag);
+                //  $.notify(json.message);
+                alert('feed added');
+                feedApi.getLiveFeed(1);
+                e('#loaderUpdateFeed').hide();
+            });
+
+
+
+        },
+        getTAPTopics: function () {
+            var url = host + "api/apidebate/getdebatetopics";
+            var token = localStorage.getItem('access_token');
+            new HttpRequest(url, function () { }, token).getRequest(function (json) {
+
+                new Template(json.list, 'topicsTemplate', 'topicsContainer').append();
+                //$("#topicsTemplate").tmpl(json.list).appendTo("#topicsContainer");
+
+
+            });
+        },
+        mediaFeed: function (text) {
+
+            text = encodeURIComponent(text);
+            var url = host + "api/apilivefeed/CreateMediaFeed?feed_text=" + text + "&privacy_type=2";
+            var formData = new FormData();
+            formData.append("image", file);
+            new HttpRequest(url, function () { }, headers).formRequest("feedmdeia", "file", new Array(), function (json) {
+
+                console.log("file upload : " + json.flag);
+                $('#loaderUpdateFeed').hide();
+                feedApi.getLiveFeed();
+
+
+            });
+        },
+        getLiveFeed: function (page) {
+            e('#feedLoader').show();
+
+            if (page > 1) {
+                // $('#feedLoader').show();
+                //  document.getElementById('feedLoader')
+            }
+            // $('#loaderUpdateFeed').toggle();
+
+            var token = localStorage.getItem('access_token');
+
+
+            var url = host + 'api/apilivefeed/gettodayfeed?page=' + page;
+
+            new HttpRequest(url, function () { }, token).getRequest(function (json) {
+                /// uiViewLiveFeed(json.friends_feed, json.pagging);
+                console.log(json);
+                json.friends_feed.forEach(function (obj) {
+
+
+                    var image = 'resource/images/default/profile.svg';
+
+                    if (obj.account.profile_picture != null) {
+                        obj.account.profile_picture = host + obj.account.profile_picture;
+                    }
+                    else {
+                        obj.account.profile_picture = image;
+                    }
+                    console.log(obj.account.profile_picture);
+
+                    obj.media_links.forEach(function (object) {
+                        object.image_path = host + object.image_path;
+                        object.file_path = host + object.file_path;
+                    });
+
+                    obj.comments.forEach(function (object) { object.account.profile_picture = host + object.account.profile_picture; });
+
+
+                    obj.comments.forEach(function (commentObj) {
+
+                        if (commentObj.account.profile_picture === null) {
+                            commentObj.account.profile_picture = '/resource/images/default/profile.svg';
+                        }
+                        else {
+                            commentObj.account.profile_picture = commentObj.account.profile_picture + "&size=small";
+                        }
+                    });
+
+                });
+
+
+                new Template(json.friends_feed, 'feedTemplate', 'viewFeedContainer').html();
+                e('.textAddComment').on("keyup", addComment_Evant);
+                e('.sharefeed').on("click", function () {
+
+                    let private_id = e(this).getClosest('.feed-footer').getObject(0).getAttribute('feed-private-id');
+                    let feed_id = e(this).getClosest('.feed-footer').getObject(0).getAttribute('feed-id');
+                    feedApi.shareFeed(feed_id);
+                });
+
+
+                function addComment_Evant(event) {
+
+
+                    if (event.keyCode === 13) {
+
+                        let private_id = e(this).getClosest('.feed-footer').getObject(0).getAttribute('feed-private-id');
+                        let feed_id = e(this).getClosest('.feed-footer').getObject(0).getAttribute('feed-id');
+
+                        let total_comment = parseInt(e('#c_' + private_id).val().split(' ')[0]);
+
+                        e('#c_' + private_id).val(++total_comment + " comment")
+                        let comment_text = this.value;
+                        feedApi.addTextComment(comment_text, feed_id, 'class');
+                        this.value = '';
+                    }
+
+
+                }
+                e('.likeUnlikePhoto').on('click', function () {
+                    let feed_id = e(this).getClosest('.feed-footer').getObject(0).getAttribute('feed-id');
+
+                    let current_image = this.getAttribute('src');
+
+                    if (current_image.trim() == FeedIcon.feed_favorite.trim()) {
+
+                        this.setAttribute('src', FeedIcon.feed_not_favorite);
+                    }
+                    else {
+                        this.setAttribute('src', FeedIcon.feed_favorite);
+
+                    }
+
+                    feedApi.likeFeedToggle(feed_id);
+                });
+                e('#feedLoader').hide();
+            });
+
+
+        },
+        createMediaFeed: function (url) {
+            var totalFiles = document.getElementById("feedmdeia").files.length;
+            var formData = new FormData();
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById('feedmdeia').files[i];
+                formData.append('image', file);
+            }
+
+            new HttpRequest(url, function () { }, headers).formRequest(formData, function (json) {
+                json = JSON.parse(json);
+                console.log("My profile pic  change : " + json.flag);
+                e('#loaderProfileficture').hide();
+                e('#feedMediaContainar').hide();
+                if (json.flag) {
+                    getLiveFeed(1);
+                    //  $.notify(json.message);
+                    localStorage.setItem('profile_picture', json.profile_picture);
+                    // $('#myPorfilePic').attr('src', json.profile_picture);
+                }
+
+            });
+        },
+        likeFeedToggle: function (feed_id) {
+            new HttpRequest(host + "api/apilivefeed/addremovelike", function () { }, headers).postRequest(JSON.stringify({ feed_id: feed_id }), function (json) {
+                json = JSON.parse(json);
+                console.log("addremovelike" + json.flag);
+
+                //  e('#loaderUpdateFeed').hide();
+                displayMessage(json.message);
+            });
+        },
+        shareFeed: function (feed_id) {
+            new HttpRequest(host + 'api/ApiLiveFeed/ShareFeed', function () { }, headers).postRequest(JSON.stringify({ "feed_id": feed_id }), function (json) {
+                json = JSON.parse(json);
+                console.log("shareFeed" + json.flag);
+                displayMessage(json.message);
+                feedApi.getLiveFeed(1);
+            });
+        }
+    };
+
+
+    feedApi.getLiveFeed(1);
+    feedApi.getTAPTopics();
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script type="text/javascript" src="../controllers/livefeed.js"></script>
+
+<style>
+    .fake-input {
+        position: relative;
+        width: 100%;
+    }
+
+        .fake-input input {
+            border: none: background:#fff;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 58px;
+        }
+
+        .fake-input img {
+            position: absolute;
+            top: 4px;
+            padding: 2px;
+            right: 6px;
+            height: 20px;
+            width: 20px;
+        }
+</style>

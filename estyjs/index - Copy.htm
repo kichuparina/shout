@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Single Page Application Micro Framework Demo</title>
+    <style></style>
+
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<script src="libs/jquery-1.10.2.min.js"></script>-->
+    <script type="text/javascript" src="libs/esty.vanilla.route.js"></script>
+    <!--<script type="text/javascript" src="libs/esty.template.js"></script>-->
+    <link href="resource/css/style.css" rel="stylesheet" />
+    <link href="resource/css/style.mobile .css" rel="stylesheet" />
+    <link href="resource/css/style.desktop.css" rel="stylesheet" />
+
+    <link href="resource/css/style.tablet.css" rel="stylesheet" />
+    <script src="libs/esty.js"></script>
+    <script id="testemplate" type="text/x-jQuery-tmpl">
+        <li>${number}</li>
+    </script>
+
+</head>
+<body>
+ <!--<header>
+     <nav>
+         <a href="#home?id=5&name=esty">Home</a> |
+         <a href="#about/my?id=50&name=abcd">About my</a> |
+         <a href="#about/company">About company</a>
+     </nav>
+ </header>-->
+
+    <div id="app" class="full-width pull-left">
+        <section id="home"></section>
+        <section id="aboutmy"></section>
+        <section id="aboutcompany"></section>
+    </div>
+
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var route = [
+                        { pageLocation: "home.html", pageTitle: "Home Page", displayUrl: 'home', section: "#home", isContentLoadingEverytime: false },
+                        { pageLocation: "aboutmy.html", pageTitle: "About my", displayUrl: 'about/my', section: "#aboutmy", isContentLoadingEverytime: true },
+                        { pageLocation: "aboutcompany.html", pageTitle: "About company", displayUrl: 'about/company', section: "#aboutcompany", isContentLoadingEverytime: true }
+            ];
+
+            var app = new EstyJs();
+            app.routes = route;
+         
+            app.onPageLoading = function (pageTitle,isAlreadyLoaded)
+            {
+                console.log(pageTitle + '   ' + isAlreadyLoaded);
+            }
+            app.initPage();
+            let username = 'this.esty';
+            let password = 'Abc123456';
+            let device_id = '12345';
+            var senddata =  "grant_type=password&username=this.esty&password=Abc123456&device=web&device_name=chrome&device_id=2234" 
+            var host = "http://localhost:61/";
+            var url = host + "api/authenticate";
+            new HttpRequest(url, function () { }, '').postRequest(senddata, function (data) {
+                var access_token = "bearer " + data.access_token;
+                localStorage.setItem('access_token', access_token);
+                let name = data.name;
+                let account_id = data.account_id;
+                let private_id = data.private_id;
+                let profile_picture = data.profile_picture;
+                if (profile_picture == null) {
+                    profile_picture = '/Content/images/default/profile.svg';
+                }
+                else {
+                    profile_picture += "&size=sm";
+                }
+
+                localStorage.setItem('name', name);
+                localStorage.setItem('account_id', account_id);
+                localStorage.setItem('private_id', private_id);
+                localStorage.setItem('profile_picture', profile_picture);
+                alert(profile_picture);
+               
+            });
+        })
+
+       
+     
+    </script>
+</body>
+</html>

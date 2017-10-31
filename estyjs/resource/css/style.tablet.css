@@ -1,0 +1,16 @@
+﻿@media screen and (max-width: 600px) {
+
+    .app-content {
+        padding: 0;
+    }
+
+    .hide-on-tablet {
+        display: none;
+    }
+
+    .full-width-tablet {
+        width: 100% !important;
+    }
+
+  
+}

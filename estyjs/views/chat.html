@@ -1,0 +1,384 @@
+﻿<div class="chatContainer global  mcontainer full-height" style="overflow:hidden; " id="ChatContainer">
+
+
+    <header class="full-width">
+
+        <div class="half-width pull-left">
+            <h4 id="lblFullName"></h4>
+        </div>
+        <div class="half-width pull-left">
+            <!--<button type="button" class="btn btn-default pull-right" id="videoCallButton">
+                <span class="glyphicon glyphicon-facetime-video"></span>
+            </button>-->
+
+            <input id="btnViewProfile" type="image" src="../resource/images/icon/user.png" height="20" alt="Submit" class="pull-right hide-on-desktop" />
+        </div>
+    </header>
+    <div id="chatHistoryWrapper" class="chatHistoryWrapper">
+
+
+        <div class=" width70-percent full-height pull-left full-width-phone" style="background: #f5f5f9;">
+            <div class="chatHistoryScrollContainer"  id="style-6">
+                <div class="full-width " id="chatHistroy">
+
+
+
+
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+            <footer class="full-width send-message-ctr">
+
+
+                <div class="full-width">
+
+
+                    <div style="width:60px;float:left;    margin-top: 7px;">
+                        <img src="resource/images/icon/photo.png" width="25" style="float:left;margin-right:4px;" />
+                        <img src="resource/images/icon/happy.png" width="25" style="float:left" id="chatEmoji" />
+                    </div>
+                    <div style="width:calc(100% - 105px);float:left;">
+                        <input type="text" class="form-control emojify" id="txtMessage" style="height: 40px; border:0;" placeholder="Send message" />
+                    </div>
+                    <div style="width:45px;float:left; ">
+
+                        <a class="input-group-btn   go inline" id="btnSendMessageSingle">
+
+                            <img src="resource/images/icon/send.png" style="padding:5px;  margin-top: 1px; height: 40px; width: 40px; margin-left: 10px;" />
+
+                        </a>
+                    </div>
+
+
+                </div>
+
+            </footer>
+
+        </div>
+        <div class="width30-percent full-height pull-left padding-10 no-display-in-phone" id="userProfile">
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    //  alert('test' + getParameterByName('id',window.location.href));
+    var headers = localStorage.getItem('access_token');
+    let account_id = new Request(window.location.href).getQueryString("id");
+
+
+    var client_id = 0;
+    function uiChatHistory(list, scroll, page) {
+        let seenArray = '';
+        list.forEach(function (obj) {
+            if (obj.sender_profile_picture == null) {
+                obj.sender_profile_picture = 'resource/images/default/profile.svg';
+            }
+            else {
+                obj.sender_profile_picture = host + obj.sender_profile_picture;
+            }
+            obj.chat_state_image = host + 'content/images/icon/' + obj.chat_state_image;
+
+            if (obj.display_position == "right" && (obj.is_seen == false || obj.is_delivered == false)) {
+                seenArray += obj.chat_id + ",";
+            }
+
+
+        });
+        console.log(seenArray);
+        new Template(list, 'chatHistoryTemplate', 'chatHistroy').append();
+        e('.chatHistoryScrollContainer').scrolledBottom();
+        if (seenArray.length > 2) {
+            apiCall.makeDelivered(seenArray);
+        }
+    }
+
+
+    var chatApi = {
+        isFolowing: function (friend_id) {
+            var url = host + 'api/ApiFollowing/IsFollowing';
+            var senddata = { "account_id": friend_id };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+
+                console.log("isFolowing" + json.flag);
+                $('.btnFollowUnfollow').show();
+
+
+                if (json.flag) {
+                    $('.btnFollowUnfollow').val("Unfollow");
+                }
+                else {
+                    $('.btnFollowUnfollow').val("Follow");
+                }
+            });
+
+
+
+        },
+        follow: function (friend_id) {
+
+
+            var url = host + 'api/ApiFollowing/Follow';
+            var senddata = { "account_id": friend_id };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("follow" + json.flag);
+
+                $.notify(json.message);
+            });
+
+        },
+        unFollow: function (friend_id) {
+
+            var url = host + 'api/ApiFollowing/UnFollow';
+            var senddata = { "account_id": friend_id };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+                console.log("unFollow" + json.flag);
+                $.notify(json.message);
+            })
+
+
+
+        },
+        getBlockFriends: function () {
+
+            var url = host + 'api/ApiBlockFriend/GetBlockedFriends';
+            new HttpRequest(url, function () { }, headers).getRequest(function (json) {
+                console.log("blockFriend" + json.flag);
+
+
+                $.each(json.block_list, function (index, obj) {
+
+
+
+                    if (obj.profile_picture != null) {
+                        obj.profile_picture = obj.profile_picture + "&type=sm";
+                    }
+                    else {
+                        obj.profile_picture = new ChatState().defaultProfile;
+                    }
+                    $("#blockedTemplat").tmpl(obj).appendTo("#listViewBlockedList");
+
+                });
+
+                $('.btnUnblock').unbind('click').click(function () {
+
+                    var account_id = $(this).attr('data-account_id');
+                    unBlockFriend(account_id);
+                    $(this).closest('tr').remove();
+                });
+
+
+
+            });
+
+        },
+        blockFriend: function (account_id) {
+
+            var url = host + 'api/ApiBlockFriend/BlockFriend';
+            var senddata = { "account_id": account_id };
+            new HttpRequest(url, function () { }, headers).postRequest(JSON.stringify(senddata), function (json) {
+
+                console.log("blockFriend" + json.flag);
+                getChats();
+                $.notify(json.message);
+            });
+        },
+        getUserProfile: function (account_id, isMyy) {
+
+            var url = host + 'api/apiuser/GetUserProfile?account_id=' + account_id;
+            var token = localStorage.getItem('access_token');
+
+
+            new HttpRequest(url, function () { }, token).getRequest(function (json) {
+                console.log("getUserProfile: " + json.profile);
+
+                if (json.profile.profile_picture == null) {
+                    json.profile.profile_picture = 'resource/images/default/profile.svg';
+                }
+                else {
+                    json.profile.profile_picture = host + json.profile.profile_picture;
+                }
+                if (isMyy == true) {
+                    let gender = json.profile.gender;
+                    if (gender == null) {
+                        gender = "";
+                    }
+
+
+
+                    e('#txtMyProfileName').set(json.profile.name);
+
+
+
+                    $('#lblMyGender').text(gender);
+                    $('#ddlMyGender').val(gender);
+
+
+                    $('#lbl_myprofile_email').text(json.profile.email);
+                    $('#lbl_myprofile_username').text(json.profile.username);
+                    $('#img_mypicture').attr('src', json.profile.profile_picture);
+
+                }
+                else {
+                    //$('#userProfile div').remove();
+                    e('#userProfile').removeAllChildren()
+                    //$("#userProfileTemplat").tmpl(json.profile).appendTo("#userProfile");
+
+                    new Template(json.profile, 'userProfileTemplat', 'userProfile').append();
+                    //  isFolowing(account_id);
+                    e('.btnBlockFriend').on('click', function () {
+                        alert('btnBlockFriend click');
+                        // e('#ChatContainer').hide();
+                        // e('#FeedContainer').show();
+                        // var account_id = $(this).attr('data-account_id');
+                        blockFriend(account_id);
+                        app.redirectPage("livefeed");
+                    });
+
+                    e('.btnFollowUnfollow').on('click', function () {
+                        alert('btnFollowUnfollow click');
+                        let text = $(this).val();
+
+                        if (text == "Follow") {
+                            follow(account_id);
+                            $(this).val("Unfollow")
+                        }
+                        else {
+                            unFollow(account_id);
+                            $(this).val("Follow")
+                        }
+
+
+                    });
+
+
+
+                    e('.btnUnfriend').on('click', function () {
+
+                        $('#ChatContainer').hide();
+                        $('#FeedContainer').show();
+                        //  var account_id = $(this).attr('data-account_id');
+                        unFriend(account_id);
+
+
+                    });
+
+
+
+
+
+
+                }
+            });
+
+
+        },
+        getChatHistory: function (account_id, page) {
+
+            let sortOrder = "as";
+            if (page > 1) {
+                sortOrder = "ds";
+            }
+            var token = localStorage.getItem('access_token');
+            var url = host + 'api/apichat/getchathistorybyfriend?account_id=' + account_id + '&page=' + page + '&pagesize=20&sort_order=' + sortOrder;
+
+            new HttpRequest(url, function () { }, token).getRequest(function (json) {
+                let scrollPos = "bottom";
+                if (page > 1) {
+                    scrollPos = "top";
+                }
+                uiChatHistory(json.user_chats, scrollPos, page);
+                var seenArray = "";
+                var counter = 0;
+
+                if (counter > 0) {
+
+                    makeSeen(seenArray);
+                }
+            });
+        },
+        sendMessage: function (friend_id, message, client_id) {
+
+            client_id++;
+
+
+            var newChat = { "chat_id": 0, "sender_account_id": 0, "sender_name": "esty", "sender_profile_picture": "/medialink/getmedia?media_link=HPP0MeHtXFl8vtrCt/aWbA==", "receiver_account_id": 155, "receiver_username": "raihan", "receiver_name": "Raihan Kumar", "message": "dog", "display_position": "right", "is_group": false, "group_id": 0, "group_identifier": null, "group_name": null, "is_seen": false, "is_delivered": false, "chat_state_image": "/Content/images/icon/delivered.png", "created_on": "2017-09-18T13:37:03", "text_type": 1, "file_id": null, "file_url": null, "mime_type": "application/octet-stream", "chat_time": null };
+            newChat.chat_id = client_id;
+            newChat.message = message;
+            var senddata = { DestinationAccountID: friend_id, Message: message, TextType: 1, GroupID: 0 };
+            var url = host + "/api/apichat/insert?client_id=" + client_id;
+            var token = localStorage.getItem('access_token');
+            new Template(newChat, 'chatHistoryTemplate', 'chatHistroy').append();
+            new HttpRequest(url, function () { }, token).postRequest(JSON.stringify(senddata), function (data) {
+                let josn = JSON.parse(data);
+
+                e('#img_' + josn.client_id).getObject(0).setAttribute("id", 'img_' + josn.chat_id);
+                e('.chatHistoryScrollContainer').scrolledBottom();
+            });
+
+
+        }
+    }
+
+    chatApi.getChatHistory(account_id, 1);
+    chatApi.getUserProfile(account_id, false);
+    // apiCall.makeDelivered("1,");
+
+    //assign value
+    e('#lblFullName').val(localStorage.getItem('name'));
+
+
+    //events
+    e('#btnViewProfile').on('click', viewProfile_Event);
+    e('#btnSendMessageSingle').on("click", sendMessage_Event);
+
+
+
+    function sendMessage_Event() {
+
+        let text = e('#txtMessage').val();
+        let id = getParameterByName('id', window.location.href);
+        chatApi.sendMessage(id, text, 1);
+
+    }
+    function viewProfile_Event() {
+
+        e('#userProfile').getObject(0).classList.add("force-popup");
+        e('#userProfile').getObject(0).classList.remove("no-display-in-phone");
+        var objTo = document.getElementById('userProfile')
+        var divtest = document.createElement("div");
+        divtest.classList.add("close-popup");
+        divtest.setAttribute("parent-id", 'userProfile');
+        divtest.innerHTML = "x";
+        objTo.appendChild(divtest);
+        e('.close-popup').on('click', function () {
+            let parent_id = '#' + e('.close-popup').getObject(0).getAttribute("parent-id");
+            e(parent_id).getObject(0).classList.remove("force-popup");
+        });
+    }
+
+
+
+
+
+
+
+
+
+    //Following
+
+
+
+
+</script>

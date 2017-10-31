@@ -1,0 +1,89 @@
+﻿/* Style for viewports greater than 320px wide. */
+/*@media (min-width: 20em) {
+  .Component {
+    background-color: blue;
+  }
+}*/
+
+@media only screen and (max-width: 400px) {
+
+    .app-content {
+        padding: 0;
+    }
+
+    .hide-on-mobile {
+        display: none;
+    }
+
+    #cNav {
+        background: #3598DB;
+        border-radius: 0px !important;
+        padding: 5px 4px 5px 3px;
+    }
+
+    .hide-on-desktop {
+        display: block !important;
+    }
+
+    .side-bar {
+        border-right: 1px solid #ccc;
+        height: 100%;
+        width: 75% !important;
+        position: absolute;
+        background: #fff;
+        z-index: 400;
+    }
+
+
+    .accessContainer-inner {
+        width: 100% !important;
+        height: 248px;
+        background: #fff;
+        border-radius: 4px;
+        margin: 0px auto;
+        padding: 10px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 2px 12px;
+        line-height: 1.428571429;
+        font-size: 12px;
+        color: #4C4C4C;
+        vertical-align: middle;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        font-family: "Segoe UI", arial, sans-serif;
+        border-radius: 3px;
+    }
+
+    .full-width-phone {
+        width: 100% !important;
+    }
+
+    .no-display-in-phone {
+        display: none !important;
+    }
+
+    .chatrow_userpicture_container {
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    .header-nav li {
+        margin: 0 18px 0 19px !important;
+        float: left;
+    }
+
+    .chatHistoryWrapper {
+        height: calc(100% - 130px) !important;
+    }
+}
